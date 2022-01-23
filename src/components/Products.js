@@ -1,25 +1,17 @@
 //Product list
 import React, { Component } from 'react';
 import formatCurrency from '../util';
-import Fade from "react-reveal/Fade";
+import Fade from 'react-reveal/Fade';
 import Modal from "react-modal";
-import Zoom from "react-reveal/Zoom";
-// import { connect } from 'mongoose';
-import { connect } from "react-redux";
-import { fetchProducts } from "../actions/productActions";
-import { addToCart } from "../actions/cartActions";
+import Zoom from 'react-reveal/Zoom';
 
-class Products extends Component {
+export default class Products extends Component {
     //define constructor for Modal
     constructor(props){
         super(props);
         this.state = {
             product: null,   //not show the Modal
         };
-    }
-
-    componentDidMount() {
-        this.props.fetchProducts();
     }
 
     openModal = (product) =>{
@@ -31,17 +23,12 @@ class Products extends Component {
 
     render() {
         const {product} = this.state;
-        console.log(this.props.products);
         return (
             // Fade - all products come up from down to top (animation)
             <div>
-                <Fade bottom cascade>
-                    {
-                    !this.props.products ? ( 
-                        <div> Loading...</div>
-                    ) : (
-                        <ul className="products">
-                          {this.props.products.map((product) => (
+                <Fade bottom cascade={true}>  
+                <ul className="products">
+                    {this.props.products.map(product => (
                         <li key={product._id}>
                             <div className="product">
                                 <a href={"#" + product._id} onClick={() => this.openModal(product)}>
@@ -51,10 +38,8 @@ class Products extends Component {
                                     </p>
                                 </a>
                                 <div className="product-price">
-                                {/* //check if there is a define price of each product in the products collection in the database.  */}
-                                {/* If not - can modify the code to avid errors */}
                                     <div>
-                                        {product.price ? (formatCurrency(product.price)) : (null)}
+                                        {formatCurrency(product.price)}
                                     </div>
                                     <button onClick={() => this.props.addToCart(product)} 
                                             className="button primary">
@@ -65,9 +50,9 @@ class Products extends Component {
                         </li>
                     ))}
                 </ul>
-                )}
                 </Fade>
-                {product && (
+                {
+                    product && (
                         <Modal isOpen={true} onRequestClose={this.closeModal}>
                             <Zoom>
                                 <button className="close-modal" onClick={this.closeModal}>
@@ -114,13 +99,3 @@ class Products extends Component {
         );
     }
 }
-//first parameter is which part of state we gonna use (products). 
-//second parameter is connect to action fetchProducts
-//last one is component to connect (Products)
-export default connect(
-    (state)=>({ products: state.products.filteredItems }),   //items came from productReducers.js
-    {  
-    fetchProducts,
-    addToCart,
-    }
-)(Products);

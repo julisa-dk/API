@@ -1,29 +1,28 @@
 import React from "react";
 import Filter from "./components/Filter";
 import Products from "./components/Products";
-// import data from "./data.json";
+import data from "./data.json";
 import Cart from "./components/Cart";
-import store from "./store";
-import { Provider } from "react-redux";
 
 class App extends React.Component {
-/*   constructor() {
+  constructor() {
     super();
     this.state = {
-    
+      products: data.products,
       cartItems: localStorage.getItem("cartItems") //Check at cartItem is empty 
       ? JSON.parse(localStorage.getItem("cartItems"))
       : [], 
       size: "",
       sort: "",
     };
-  } */
-  /* createOrder = (order) => {
+  }
+  createOrder = (order) => {
     alert("Need to save order for " + order.name);
-  }; */
+  };
 
-  /* removeFromCart = (product) =>{
+  removeFromCart = (product) =>{
     const cartItems = this.state.cartItems.slice();
+    /*add new cart to the state*/
     this.setState({
       cartItems: cartItems.filter((x) => x._id !== product._id)
     });
@@ -32,9 +31,9 @@ class App extends React.Component {
       JSON.stringify(cartItems.filter((x) => x._id !== product._id))
     );
 
-  }; */
+  };
   
-  /* addToCart =(product) => {
+  addToCart =(product) => {
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
     cartItems.forEach((item) => {
@@ -49,8 +48,7 @@ class App extends React.Component {
     this.setState({cartItems});
     localStorage.setItem("cartItems", JSON.stringify(cartItems)); //if we refresh page out items should be here. So we make persistent for items
   };
- */
-  /* We don't need this sort anymore because we moved to action sortProduct
+
   sortProducts = (event) =>{
     //imp
     const sort = event.target.value;
@@ -74,9 +72,7 @@ class App extends React.Component {
         ),
     }));
   };
- */
-  /* We don't need this filter anymore because we moved to action ProductFilter
-  
+
   filterProducts = (event) =>{
     //imp
     console.log(event.target.value);
@@ -92,12 +88,10 @@ class App extends React.Component {
     }
     
   };
- */
+
   render(){
 
   return (
-    //wrap all functions in Provider (component from react-redux libriary)
-    <Provider store={store}>
     <div className="grid-container">
       <header>
         <a href="/">React Shopping Cart</a> 
@@ -105,20 +99,33 @@ class App extends React.Component {
       <main>
         <div className="content">
           <div className="main">
+            <Filter 
+              count={this.state.products.length}
+              /* properties to Filter component */
+              size={this.state.size}   
+              sort={this.state.sort}
 
-            {/* We don't need code for filter anymore, because all component comes from state here */}
-            <Filter></Filter>
-            
-            <Products></Products>
+              /* definde 2 functions to hendel changing size and sort */
+              filterProducts={this.filterProducts}
+              sortProducts={this.sortProducts}
+            ></Filter>
+            <Products products={this.state.products} addToCart={this.addToCart}></Products>
+
           </div>
           <div className="sidebar">
-            <Cart />
+            <Cart 
+                cartItems={this.state.cartItems} 
+                removeFromCart={this.removeFromCart}
+                createOrder={this.createOrder}
+            />
           </div>
         </div>
       </main>
-      <footer>@Developed by Julia Khalina</footer>
-   </div>
-   </Provider>
+      <footer>
+        @Developed by Julia Khalina
+      </footer>
+
+    </div>
   );
   }
 }
